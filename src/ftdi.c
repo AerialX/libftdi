@@ -520,7 +520,7 @@ static unsigned int _ftdi_determine_max_packet_size(struct ftdi_context *ftdi, l
     \retval -11: libusb_detach_kernel_driver() failed
     \retval -12: libusb_get_configuration() failed
 */
-int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
+int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev, int fd)
 {
     struct libusb_device_descriptor desc;
     struct libusb_config_descriptor *config0;
@@ -529,16 +529,17 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
     if (ftdi == NULL)
         ftdi_error_return(-8, "ftdi context invalid");
 
-    if (libusb_open(dev, &ftdi->usb_dev) < 0)
+    if (libusb_open2(dev, &ftdi->usb_dev, fd) < 0)
         ftdi_error_return(-4, "libusb_open() failed");
 
     if (libusb_get_device_descriptor(dev, &desc) < 0)
         ftdi_error_return(-9, "libusb_get_device_descriptor() failed");
-
+#if 0
     if (libusb_get_config_descriptor(dev, 0, &config0) < 0)
         ftdi_error_return(-10, "libusb_get_config_descriptor() failed");
     cfg0 = config0->bConfigurationValue;
     libusb_free_config_descriptor (config0);
+#endif
 
     // Try to detach ftdi_sio kernel module.
     //
@@ -551,7 +552,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
         if (libusb_detach_kernel_driver(ftdi->usb_dev, ftdi->interface) !=0)
             detach_errno = errno;
     }
-
+#if 0
     if (libusb_get_configuration (ftdi->usb_dev, &cfg) < 0)
         ftdi_error_return(-12, "libusb_get_configuration () failed");
     // set configuration (needed especially for windows)
@@ -572,7 +573,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
             }
         }
     }
-
+#endif
     if (libusb_claim_interface(ftdi->usb_dev, ftdi->interface) < 0)
     {
         ftdi_usb_close_internal (ftdi);
@@ -623,7 +624,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
 
     ftdi_error_return(0, "all fine");
 }
-
+#if 0
 /**
     Opens the first device with a given vendor and product ids.
 
@@ -664,6 +665,7 @@ int ftdi_usb_open_desc(struct ftdi_context *ftdi, int vendor, int product,
 {
     return ftdi_usb_open_desc_index(ftdi,vendor,product,description,serial,0);
 }
+#endif
 
 /**
     Opens the index-th device with a given, vendor id, product id,
@@ -689,6 +691,7 @@ int ftdi_usb_open_desc(struct ftdi_context *ftdi, int vendor, int product,
     \retval -10: unable to close device
     \retval -11: ftdi context invalid
 */
+#if 0
 int ftdi_usb_open_desc_index(struct ftdi_context *ftdi, int vendor, int product,
                              const char* description, const char* serial, unsigned int index)
 {
@@ -760,6 +763,7 @@ int ftdi_usb_open_desc_index(struct ftdi_context *ftdi, int vendor, int product,
     // device not found
     ftdi_error_return_free_device_list(-3, "device not found", devs);
 }
+#endif
 
 /**
     Opens the ftdi-device described by a description-string.
@@ -787,6 +791,7 @@ int ftdi_usb_open_desc_index(struct ftdi_context *ftdi, int vendor, int product,
     \retval -11: illegal description format
     \retval -12: ftdi context invalid
 */
+#if 0
 int ftdi_usb_open_string(struct ftdi_context *ftdi, const char* description)
 {
     if (ftdi == NULL)
@@ -870,6 +875,7 @@ int ftdi_usb_open_string(struct ftdi_context *ftdi, const char* description)
         ftdi_error_return(-11, "illegal description format");
     }
 }
+#endif
 
 /**
     Resets the ftdi device.
