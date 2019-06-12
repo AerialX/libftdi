@@ -574,6 +574,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev, int fd)
         }
     }
 #endif
+#if 0
     if (libusb_claim_interface(ftdi->usb_dev, ftdi->interface) < 0)
     {
         ftdi_usb_close_internal (ftdi);
@@ -586,6 +587,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev, int fd)
             ftdi_error_return(-5, "unable to claim usb device. Make sure the default FTDI driver is not in use");
         }
     }
+#endif
 
     if (ftdi_usb_reset (ftdi) != 0)
     {
